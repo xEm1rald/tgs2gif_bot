@@ -43,13 +43,11 @@ def main() -> None:
     if proxy_enabled:
         application = (Application.builder()
                        .token(bot_token)
-                       .proxy(get_proxy_url(config.get("proxy", {})))
                        .connect_timeout(30000000)
                        .read_timeout(30000000)
                        .write_timeout(30000000)
                        .pool_timeout(30000000)
                        .media_write_timeout(30000000)
-                       .get_updates_proxy(get_proxy_url(config.get("proxy", {})))
                        .build())
     else:
         application = (Application.builder()

@@ -5,6 +5,9 @@ import json
 import os
 from loguru import logger
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def load_config(config_path: str = "config.json") -> dict:
     """
@@ -15,9 +18,15 @@ def load_config(config_path: str = "config.json") -> dict:
     :raises FileNotFoundError: If the config file is not found.
     :raises json.JSONDecodeError: If the file contains invalid JSON.
     """
-    with open(config_path, "r", encoding="utf-8") as f:
-        config = json.load(f)
-    return config
+
+    return {
+        "bot_name": os.getenv("BOT_NAME"),
+        "bot_token": os.getenv("BOT_TOKEN"),
+        "bot_username": os.getenv("BOT_USERNAME"),
+        "convert_workers": 5,
+        "download_workers": 5,
+        "allow_sticker_sets": True,
+    }
 
 
 def get_proxy_url(proxy_config: dict) -> str:
