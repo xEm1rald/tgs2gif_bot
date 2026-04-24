@@ -12,7 +12,7 @@ from loguru import logger
 
 from config import load_config
 from retry_utils import retry_on_exception
-from utils import split_and_upload_document
+from utils import split_and_upload_document, retry_upload_document
 from converter import tgs_convert
 from typing import Dict, Any
 
@@ -289,29 +289,19 @@ async def process_single_sticker(
         )
         logger.info(f"Converted {unique_id}.tgs → {out_path}")
 
-        # 3) Package into ZIP
-        zip_path = f"{tmp_dir}/{set_name}_{unique_id}.zip"
-        with zipfile.ZipFile(zip_path, "w") as zf:
-            zf.write(
-                out_path,
-                f"{set_name}/{chosen_format}/{unique_id}.{chosen_format}"
-            )
-            zf.write(
-                tgs_path,
-                f"{set_name}/tgs/{unique_id}.tgs"
-            )
-
-        # 4) Send ZIP
+        # 3) Send Converted File Directly
         await feedback_msg.reply_text("📤 Uploading file…", parse_mode="Markdown")
-        await split_and_upload_document(
+
+        # Отправляем напрямую файл (out_path), а не архив
+        await retry_upload_document(
             feedback_msg,
+            file_obj=out_path,
             caption=(
                 f"✅ *Task Completed!*\n"
                 f"• *Credits:* {BOT_USER_NAME}\n"
                 f"• [Add Stickers to Telegram](https://t.me/addstickers/{set_name})"
             ),
-            zip_path=zip_path,
-            chunk_size=50_000_000,
+            parse_mode="Markdown"
         )
 
     except Exception as e:
