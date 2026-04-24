@@ -12,6 +12,7 @@ RUN cargo install gifski
 
 # ВАЖНО
 ENV PATH="/root/.cargo/bin:${PATH}"
+RUN chmod -R 777 ./tgs2gif_bot
 
 WORKDIR /app
 COPY . .
