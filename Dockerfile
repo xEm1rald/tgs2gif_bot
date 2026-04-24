@@ -1,6 +1,5 @@
 FROM python:3.10-slim
 
-# Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     curl \
@@ -8,17 +7,16 @@ RUN apt-get update && apt-get install -y \
     cargo \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка gifski через cargo
+# Установка gifski
 RUN cargo install gifski
 
-# Рабочая директория
-WORKDIR /app
+# ВАЖНО
+ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Копируем файлы
+WORKDIR /app
 COPY . .
 
-# Установка Python зависимостей
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install lottie
 
-# Запуск
 CMD ["python", "main.py"]
