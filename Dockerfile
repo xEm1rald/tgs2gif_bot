@@ -5,17 +5,19 @@ RUN apt-get update && apt-get install -y \
     curl \
     build-essential \
     cargo \
+    libcairo2 \
+    libgdk-pixbuf2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка gifski
+# gifski
 RUN cargo install gifski
-
-# ВАЖНО
 ENV PATH="/root/.cargo/bin:${PATH}"
-RUN chmod -R 777 ./tgs2gif_bot
 
 WORKDIR /app
 COPY . .
+
+# только нужный chmod
+RUN chmod +x lib/linux_amd64/lottie_to_gif.sh
 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install lottie
